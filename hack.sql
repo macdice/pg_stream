@@ -1,3 +1,40 @@
+-- Example session showing a stream view:
+--
+
+-- hack=> select stream_subscribe('foo'::regclass);
+--  stream_subscribe 
+-- ------------------
+--                 0
+-- (1 row)
+-- 
+-- hack=> select * from foo_stream;
+--  sensor | temperature 
+-- --------+-------------
+-- (0 rows)
+-- 
+-- hack=> insert into foo_stream values (1, 10), (2, 20);
+-- INSERT 0 0
+-- Asynchronous notification "foo" received from server process with PID 18168.
+-- hack=> select * from foo_stream;
+--  sensor | temperature 
+-- --------+-------------
+--       1 |       10.00
+--       2 |       20.00
+-- (2 rows)
+-- 
+-- hack=> select * from foo_stream;
+--  sensor | temperature 
+-- --------+-------------
+-- (0 rows)
+--
+-- hack=> select stream_unsubscribe('foo'::regclass);
+--  stream_unsubscribe 
+-- --------------------
+--  
+-- (1 row)
+
+-- Prototype implementation based on unlogged tables.
+
 -- The following would be provided by the extension
 
 CREATE UNLOGGED TABLE pg_stream_subscription (
